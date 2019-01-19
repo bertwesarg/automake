@@ -120,14 +120,14 @@ import sys, os, py_compile, imp
 
 files = '''$files'''
 
-sys.stdout.write('Byte-compiling python modules...\n')
+sys.stdout.write('Byte-compiling python modules...')
 for file in files.split():
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(file)
+    sys.stdout.write(' ' + file)
     sys.stdout.flush()
     if hasattr(imp, 'get_tag'):
         py_compile.compile(filepath, imp.cache_from_source(filepath), path)
@@ -144,14 +144,14 @@ if hasattr(sys, 'pypy_translation_info'):
     sys.exit(0)
 
 files = '''$files'''
-sys.stdout.write('Byte-compiling python modules (optimized versions) ...\n')
+sys.stdout.write('Byte-compiling python modules (optimized versions)...')
 for file in files.split():
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(file)
+    sys.stdout.write(' ' + file)
     sys.stdout.flush()
     if hasattr(imp, 'get_tag'):
         py_compile.compile(filepath, imp.cache_from_source(filepath, False), path)
