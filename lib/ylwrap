@@ -61,14 +61,19 @@ quote_for_sed ()
     | sed -e 's|[][\\.*]|\\&|g'
 }
 
+silent=false
 case "$1" in
   '')
     echo "$0: No files given.  Try '$0 --help' for more information." 1>&2
     exit 1
     ;;
+  --silent)
+    silent=:
+    shift 1
+    ;;
   -h|--h*)
     cat <<\EOF
-Usage: ylwrap [--help|--version] INPUT [OUTPUT DESIRED]... -- PROGRAM [ARGS]...
+Usage: ylwrap [--help|--version|--silent] INPUT [OUTPUT DESIRED]... -- PROGRAM [ARGS]...
 
 Wrapper for lex/yacc invocations, renaming files as desired.
 
@@ -208,10 +213,10 @@ if test $ret -eq 0; then
       # Check whether files must be updated.
       if test "$from" != "$parser"; then
         if test -f "$realtarget" && cmp -s "$realtarget" "$target"; then
-          echo "$to is unchanged"
+          $silent || echo "$to is unchanged"
           rm -f "$target"
         else
-          echo "updating $to"
+          $silent || echo "updating $to"
           mv -f "$target" "$realtarget"
         fi
       fi

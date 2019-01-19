@@ -55,7 +55,7 @@ $(am__recursive_targets):
 	  *) list='$(SUBDIRS)' ;; \
 	esac; \
 	for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
+	  if $(AM_V_P); then echo "Making $$target in $$subdir"; fi; \
 	  if test "$$subdir" = "."; then \
 	    dot_seen=yes; \
 	    local_target="$$target-am"; \

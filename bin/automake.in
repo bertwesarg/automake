@@ -4568,7 +4568,7 @@ sub handle_install ()
      new Automake::Location,
      maybe_BUILT_SOURCES => (set_seen ('BUILT_SOURCES')
 			     ? (" \$(BUILT_SOURCES)\n"
-				. "\t\$(MAKE) \$(AM_MAKEFLAGS)")
+				. "\t\$(AM_V_at)\$(MAKE) \$(AM_MAKEFLAGS)")
 			     : ''),
      'installdirs-local' => (user_phony_rule ('installdirs-local')
 			     ? ' installdirs-local' : ''),
@@ -4627,7 +4627,7 @@ sub handle_all
 	# things explicitly.
 	$output_all .= ("all: @local_headers"
 			. "\n\t"
-			. '$(MAKE) $(AM_MAKEFLAGS) '
+			. '$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) '
 			. (var ('SUBDIRS') ? 'all-recursive' : 'all-am')
 			. "\n\n");
         depend ('.MAKE', 'all');
@@ -4679,13 +4679,13 @@ sub do_check_merge_target ()
   $output_rules .= "check-am: all-am\n";
   if (@check)
     {
-      pretty_print_rule ("\t\$(MAKE) \$(AM_MAKEFLAGS)", "\t  ", @check);
+      pretty_print_rule ("\t\$(AM_V_at)\$(MAKE) \$(AM_MAKEFLAGS)", "\t  ", @check);
       depend ('.MAKE', 'check-am');
     }
 
   if (@check_tests)
     {
-      pretty_print_rule ("\t\$(MAKE) \$(AM_MAKEFLAGS)", "\t  ",
+      pretty_print_rule ("\t\$(AM_V_at)\$(MAKE) \$(AM_MAKEFLAGS)", "\t  ",
 			 @check_tests);
       depend ('.MAKE', 'check-am');
     }
@@ -4694,7 +4694,7 @@ sub do_check_merge_target ()
   # Handle recursion.  We have to honor BUILT_SOURCES like for 'all:'.
   $output_rules .= ("check: "
 		    . (var ('BUILT_SOURCES')
-		       ? "\$(BUILT_SOURCES)\n\t\$(MAKE) \$(AM_MAKEFLAGS) "
+		       ? "\$(BUILT_SOURCES)\n\t\$(AM_V_at)\$(MAKE) \$(AM_MAKEFLAGS) "
 		       : '')
 		    . (var ('SUBDIRS') ? 'check-recursive' : 'check-am')
 		    . "\n");
@@ -4814,7 +4814,7 @@ sub handle_factored_dependencies ()
 	  depend ('.MAKE', "$_-am");
 	  register_action("$_-am",
 			  ("\t\@\$(NORMAL_INSTALL)\n"
-			   . "\t\$(MAKE) \$(AM_MAKEFLAGS) $_-hook"));
+			   . "\t\$(AM_V_at)\$(MAKE) \$(AM_MAKEFLAGS) $_-hook"));
 	}
     }
 
@@ -6002,6 +6002,7 @@ sub yacc_lex_finish_helper ()
   # FIXME: for now, no line number.
   require_conf_file ($configure_ac, FOREIGN, 'ylwrap');
   define_variable ('YLWRAP', "$am_config_aux_dir/ylwrap", INTERNAL);
+  define_verbose_var ('ylwrap', '--silent');
 }
 
 sub lang_yacc_finish ()

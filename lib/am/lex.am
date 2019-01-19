@@ -23,7 +23,7 @@ endif %?MAINTAINER-MODE%
 
 ?GENERIC?%EXT%%DERIVED-EXT%:
 ?!GENERIC?%OBJ%: %SOURCE%
-?GENERIC?	%VERBOSE%$(am__skiplex) $(SHELL) $(YLWRAP) %SOURCE% $(LEX_OUTPUT_ROOT).c %OBJ% -- %COMPILE%
+?GENERIC?	%VERBOSE%$(am__skiplex) $(SHELL) $(YLWRAP) $(AM_V_ylwrap) %SOURCE% $(LEX_OUTPUT_ROOT).c %OBJ% -- %COMPILE%
 ?!GENERIC?	%VERBOSE% \
 ?!GENERIC??DIST_SOURCE?	$(am__skiplex) \
 ## For non-suffix rules, we must emulate a VPATH search on %SOURCE%.
