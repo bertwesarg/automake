@@ -93,8 +93,8 @@ endif %?TOPDIR_P%
 ## Only for the top dir.
 ##
 if %?TOPDIR_P%
-	$(am__remove_distdir)
-	test -d "$(distdir)" || mkdir "$(distdir)"
+	@$(am__remove_distdir)
+	@test -d "$(distdir)" || mkdir "$(distdir)"
 endif %?TOPDIR_P%
 ##
 ##
@@ -249,7 +249,7 @@ endif %?SUBDIRS%
 ## We must explicitly set distdir and top_distdir for these sub-makes.
 ##
 if %?DIST-TARGETS%
-	$(MAKE) $(AM_MAKEFLAGS) \
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) \
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
 	  %DIST-TARGETS%
 endif %?DIST-TARGETS%
@@ -272,7 +272,7 @@ endif %?DIST-TARGETS%
 ## hierarchy of subpackages.
 ##
 if %?TOPDIR_P%
-	-test -n "$(am__skip_mode_fix)" \
+	-$(AM_V_at)test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
@@ -316,44 +316,44 @@ GZIP_ENV = --best
 .PHONY: dist-gzip
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?BZIP2?DIST_ARCHIVES += $(distdir).tar.bz2
 .PHONY: dist-bzip2
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?LZIP?DIST_ARCHIVES += $(distdir).tar.lz
 .PHONY: dist-lzip
 dist-lzip: distdir
 	tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?XZ?DIST_ARCHIVES += $(distdir).tar.xz
 .PHONY: dist-xz
 dist-xz: distdir
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?COMPRESS?DIST_ARCHIVES += $(distdir).tar.Z
 .PHONY: dist-tarZ
 dist-tarZ: distdir
 	tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?SHAR?DIST_ARCHIVES += $(distdir).shar.gz
 .PHONY: dist-shar
 dist-shar: distdir
 	shar $(distdir) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).shar.gz
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?ZIP?DIST_ARCHIVES += $(distdir).zip
 .PHONY: dist-zip
 dist-zip: distdir
 	-rm -f $(distdir).zip
 	zip -rq $(distdir).zip $(distdir)
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 
 ?LZIP?DIST_TARGETS += dist-lzip
 ?XZ?DIST_TARGETS += dist-xz
@@ -382,8 +382,8 @@ AM_RECURSIVE_TARGETS += dist dist-all
 endif %?SUBDIRS%
 
 dist dist-all:
-	$(MAKE) $(AM_MAKEFLAGS) $(DIST_TARGETS) am__post_remove_distdir='@:'
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(DIST_TARGETS) am__post_remove_distdir=':'
+	$(AM_V_at)$(am__post_remove_distdir)
 
 endif %?TOPDIR_P%
 
@@ -488,7 +488,7 @@ distcheck: dist
 ## Cater to parallel BSD make (see above).
 	  && cd "$$am__cwd" \
 	  || exit 1
-	$(am__post_remove_distdir)
+	$(AM_V_at)$(am__post_remove_distdir)
 	@(echo "$(distdir) archives ready for distribution: "; \
 	  list='$(DIST_ARCHIVES)'; for i in $$list; do echo $$i; done) | \
 	  sed -e 1h -e 1s/./=/g -e 1p -e 1x -e '$$p' -e '$$x'

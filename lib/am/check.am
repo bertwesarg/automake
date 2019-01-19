@@ -235,7 +235,7 @@ am__set_TESTS_bases = \
 # to avoid problems with "make -n".
 .log.trs:
 	rm -f $< $@
-	$(MAKE) $(AM_MAKEFLAGS) $<
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $<
 
 # Leading 'am--fnord' is there to ensure the list of targets does not
 # expand to empty, as could happen e.g. with make check TESTS=''.

@@ -68,7 +68,7 @@ endif %?maybe_BUILT_SOURCES%
 
 .MAKE .PHONY: install-am
 install-am: all-am
-	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
 
 .PHONY: installcheck
@@ -94,7 +94,7 @@ install-strip:
 ##
 ## The case for empty $(STRIP) is separate so that it is quoted correctly for
 ## multiple words, but does not expand to an empty words if STRIP is empty.
-	if test -z '$(STRIP)'; then \
+	$(AM_V_at)if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
 	      install; \

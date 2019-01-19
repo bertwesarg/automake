@@ -214,10 +214,8 @@ if test $ret -eq 0; then
       # Check whether files must be updated.
       if test "$from" != "$parser"; then
         if test -f "$realtarget" && cmp -s "$realtarget" "$target"; then
-          echo "$to is unchanged"
           rm -f "$target"
         else
-          echo "updating $to"
           mv -f "$target" "$realtarget"
         fi
       fi
