@@ -21,7 +21,7 @@ AC_CHECK_TOOLS([AR], [ar lib "link -lib"], [false])
 AC_CACHE_CHECK([the archiver ($AR) interface], [am_cv_ar_interface],
   [am_cv_ar_interface=ar
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int some_variable = 0;]])],
-     [am_ar_try='$AR cru libconftest.a conftest.$ac_objext >&AS_MESSAGE_LOG_FD'
+     [am_ar_try='$AR cr libconftest.a conftest.$ac_objext >&AS_MESSAGE_LOG_FD'
       AC_TRY_EVAL([am_ar_try])
       if test "$ac_status" -eq 0; then
         am_cv_ar_interface=ar
