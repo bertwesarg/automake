@@ -33,7 +33,8 @@ install-%DIR%PYTHON: $(%DIR%_PYTHON)
 if %?BASE%
 	@list='$(%DIR%_PYTHON)'; dlist=; list2=; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
@@ -48,22 +49,24 @@ if %?BASE%
 	    list2="$$list2 $$b$$p"; \
 	  else :; fi; \
 	done; \
-	for file in $$list2; do echo $$file; done | $(am__base_list) | \
-	while read files; do \
+	for p in $$list2; do \
+	  $(am__strip_dir) \
 ## Don't perform translation, since script name is important.
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(%NDIR%dir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(%NDIR%dir)'"; \
+	                else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)/$$f"; fi; \
+	  $(INSTALL_DATA) $$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
 	done || exit $$?; \
 ## Byte-compile must be done at install time, since file times are
 ## encoded in the actual files.
 	if test -n "$$dlist"; then \
-	  $(am__py_compile) --destdir "$(DESTDIR)" \
-	                    --basedir "$(%NDIR%dir)" $$dlist; \
+	  $(am__py_compile) $(AM_V_pyc) --destdir "$(DESTDIR)" \
+	                                --basedir "$(%NDIR%dir)" $$dlist; \
 	else :; fi
 else !%?BASE%
 	@list='$(%DIR%_PYTHON)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	$(am__nobase_list) | { while read dir files; do \
@@ -74,17 +77,22 @@ else !%?BASE%
 	    else :; fi; done; \
 	  test -z "$$xfiles" || { \
 	    test "x$$dir" = x. || { \
-	      echo "$(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+	      if $(AM_V_P); then echo "$(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+	                    else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
 	      $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir"; }; \
 ## Don't perform translation, since script name is important.
-	    echo " $(INSTALL_DATA) $$xfiles '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-	    $(INSTALL_DATA) $$xfiles "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; }; \
+	    for p in $$xfiles; do \
+	      $(am__strip_dir) \
+	      if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+	                    else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)/$$dir/$$f"; fi; \
+	      $(INSTALL_DATA) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
+	    done; }; \
 	done; \
 ## Byte-compile must be done at install time, since file times are
 ## encoded in the actual files.
 	if test -n "$$dlist"; then \
-	  $(am__py_compile) --destdir "$(DESTDIR)" \
-	                    --basedir "$(%NDIR%dir)" $$dlist; \
+	  $(am__py_compile) $(AM_V_pyc) --destdir "$(DESTDIR)" \
+	                                --basedir "$(%NDIR%dir)" $$dlist; \
 	else :; fi; }
 endif !%?BASE%
 endif %?INSTALL%

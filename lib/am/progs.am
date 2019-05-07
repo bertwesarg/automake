@@ -28,7 +28,8 @@ install-%DIR%PROGRAMS: $(%DIR%_PROGRAMS)
 ## a syntax error in sh.
 	@list='$(%DIR%_PROGRAMS)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do echo "$$p $$p"; done | \
@@ -57,19 +58,22 @@ install-%DIR%PROGRAMS: $(%DIR%_PROGRAMS)
 	  END { for (d in files) print "f", d, files[d] }' | \
 	while read type dir files; do \
 ?!BASE?	  case $$type in \
-?!BASE?	  d) echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+?!BASE?	  d) if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+?!BASE?	                   else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
 ?!BASE?	     $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?;; \
 ?!BASE?	  f) \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-?!LIBTOOL?	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
-?!LIBTOOL?	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
+	    test -z "$$files" || { for p in $$files; do \
 ## Note that we explicitly set the libtool mode.  This avoids any
 ## lossage if the install program doesn't have a name that libtool
 ## expects.
-?LIBTOOL?	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
-?LIBTOOL?	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
-	    } \
+	      $(am__strip_dir) \
+?!LIBTOOL?	      if $(AM_V_P); then echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
+?LIBTOOL?	      if $(AM_V_P); then echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$p '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
+	                    else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)$$dir/$$f"; fi; \
+?!LIBTOOL?	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
+?LIBTOOL?	      $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
+	    done; } \
 ?!BASE?	  ;; esac \
 	; done
 

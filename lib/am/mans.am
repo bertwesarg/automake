@@ -38,7 +38,8 @@ if %?NOTRANS_MANS%
 	test -n "$(man%SECTION%dir)" \
 	  && test -n "`echo $$list1$$list2`" \
 	  || exit 0; \
-	echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
+	if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
+	              else echo "  MKDIR    $(DESTDIR)$(man%SECTION%dir)"; fi; \
 	$(MKDIR_P) "$(DESTDIR)$(man%SECTION%dir)" || exit 1; \
 	{ for i in $$list1; do echo "$$i"; done;  \
 ## Extract all items from notrans_man_MANS that should go in this section.
@@ -56,20 +57,13 @@ if %?NOTRANS_MANS%
 	done | \
 ## Extract the basename of the man page and change the extension if needed.
 	sed 'n;s,.*/,,;p;s,\.[^%SECTION%][0-9a-z]*$$,.%SECTION%,' | \
-	sed 'N;N;s,\n, ,g' | { \
+	sed 'N;N;s,\n, ,g' | \
 ## We now have a list "sourcefile basename installed-name".
-	list=; while read file base inst; do \
-	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
-	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
-	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
-	  fi; \
-	done; \
-	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
-	while read files; do \
-	  test -z "$$files" || { \
-	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man%SECTION%dir)'"; \
-	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man%SECTION%dir)" || exit $$?; }; \
-	done; }
+	while read file base inst; do \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
+	                else echo "  INSTALL  $(DESTDIR)$(man%SECTION%dir)/$$inst"; fi; \
+	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
+	done
 endif %?NOTRANS_MANS%
 if %?TRANS_MANS%
 ## Handle MANS without notrans_ prefix
@@ -79,7 +73,8 @@ if %?TRANS_MANS%
 	test -n "$(man%SECTION%dir)" \
 	  && test -n "`echo $$list1$$list2`" \
 	  || exit 0; \
-	echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
+	if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
+	              else echo "  MKDIR    $(DESTDIR)$(man%SECTION%dir)"; fi; \
 	$(MKDIR_P) "$(DESTDIR)$(man%SECTION%dir)" || exit 1; \
 	{ for i in $$list1; do echo "$$i"; done;  \
 ## Extract all items from notrans_man_MANS that should go in this section.
@@ -98,20 +93,13 @@ if %?TRANS_MANS%
 ## Extract the basename of the man page and change the extension if needed.
 	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^%SECTION%][0-9a-z]*$$,%SECTION%,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
-	sed 'N;N;s,\n, ,g' | { \
+	sed 'N;N;s,\n, ,g' | \
 ## We now have a list "sourcefile basename installed-name".
-	list=; while read file base inst; do \
-	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
-	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
-	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
-	  fi; \
-	done; \
-	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
-	while read files; do \
-	  test -z "$$files" || { \
-	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man%SECTION%dir)'"; \
-	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man%SECTION%dir)" || exit $$?; }; \
-	done; }
+	while read file base inst; do \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
+	                else echo "  INSTALL  $(DESTDIR)$(man%SECTION%dir)/$$inst"; fi; \
+	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
+	done
 endif %?TRANS_MANS%
 
 

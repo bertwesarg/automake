@@ -40,6 +40,7 @@ usage_error ()
   exit 1
 }
 
+silent=False
 basedir=
 destdir=
 while test $# -ne 0; do
@@ -72,6 +73,8 @@ do want to be shown in the byte compiled file.
 Options:
   --basedir DIR   Prefix all FILES with DIR, and include in error messages.
   --destdir DIR   Prefix all FILES with DIR before compiling.
+  --silent        Print all compiled files in one line, else print them per line
+                  in siltent-rule style.
   -v, --version   Display version information.
   -h, --help      This help screen.
 
@@ -85,6 +88,9 @@ EOF
     -v|--version)
       echo "$me $scriptversion"
       exit $?
+      ;;
+    --silent)
+      silent=True
       ;;
     --)
       shift
@@ -141,20 +147,27 @@ python_minor=`$PYTHON -c 'import sys; print(sys.version_info[1])'`
 $PYTHON -c "
 import sys, os, py_compile, importlib
 
-sys.stdout.write('Byte-compiling python modules...\n')
+silent = $silent
+
+if not silent:
+    sys.stdout.write('Byte-compiling python modules...\n')
 for file in sys.argv[1:]:
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(file + ' ')
-    sys.stdout.flush()
+    if not silent:
+        sys.stdout.write(file + ' ')
+        sys.stdout.flush()
+    else:
+        sys.stdout.write('  PYTHON   {}\n'.format(filepath + 'c'))
     if hasattr(sys.implementation, 'cache_tag'):
         py_compile.compile(filepath, importlib.util.cache_from_source(filepath), path)
     else:
         py_compile.compile(filepath, filepath + 'c', path)
-sys.stdout.write('\n')" "$@" || exit $?
+if not silent:
+    sys.stdout.write('\n')" "$@" || exit $?
 
 # Then byte compile w/optimization all the modules.
 case $python_major.$python_minor in
@@ -162,42 +175,56 @@ case $python_major.$python_minor in
   $PYTHON -O -c "
 import sys, os, py_compile, importlib
 
+silent = $silent
+
 # pypy does not use .pyo optimization
 if hasattr(sys, 'pypy_translation_info'):
     sys.exit(0)
 
-sys.stdout.write('Byte-compiling python modules (optimized versions) ...\n')
+if not silent:
+    sys.stdout.write('Byte-compiling python modules (optimized versions) ...\n')
 for file in sys.argv[1:]:
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(file + ' ')
-    sys.stdout.flush()
+    if not silent:
+        sys.stdout.write(file + ' ')
+        sys.stdout.flush()
+    else:
+        sys.stdout.write('  PYTHON   {}\n'.format(filepath + 'o'))
     if hasattr(sys.implementation, 'cache_tag'):
         py_compile.compile(filepath, importlib.util.cache_from_source(filepath), path)
     else:
         py_compile.compile(filepath, filepath + 'o', path)
-sys.stdout.write('\n')" "$@" 2>/dev/null || exit $?
+if not silent:
+    sys.stdout.write('\n')" "$@" 2>/dev/null || exit $?
   ;;
 *)  # Python 3+
   $PYTHON -O -c "
 import sys, os, py_compile, importlib
 
-print('Byte-compiling python modules (optimized versions) ...')
+silent = $silent
+
+if not silent:
+    print('Byte-compiling python modules (optimized versions) ...')
 for file in sys.argv[1:]:
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    print(file, end=' ', flush=True)
+    if not silent:
+        print(file, end=' ', flush=True)
+    else:
+        print('  PYTHON   {}'.format(filepath + 'o'))
     if hasattr(sys.implementation, 'cache_tag'):
         py_compile.compile(filepath, importlib.util.cache_from_source(filepath), path)
     else:
         py_compile.compile(filepath, filepath + 'o', path)
-print()" "$@" 2>/dev/null || exit $?
+if not silent:
+    print()" "$@" 2>/dev/null || exit $?
   ;;
 esac
 
@@ -210,19 +237,26 @@ case $python_major.$python_minor in
   $PYTHON -OO -c "
 import sys, os, py_compile, imp
 
-print('Byte-compiling python modules (-OO version) ...')
+silent = $silent
+
+if not silent:
+    print('Byte-compiling python modules (-OO version) ...')
 for file in sys.argv[1:]:
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
         continue
-    print(file, end=' ', flush=True)
+    if not silent:
+        print(file, end=' ', flush=True)
+    else:
+        print('  PYTHON   {}'.format(filepath + 'o'))
     if hasattr(imp, 'get_tag'):
         py_compile.compile(filepath, imp.cache_from_source(filepath), path)
     else:
         py_compile.compile(filepath, filepath + 'o', path)
-print()" "$@" 2>/dev/null || exit $?
+if not silent:
+    print()" "$@" 2>/dev/null || exit $?
   ;;
 esac
 
