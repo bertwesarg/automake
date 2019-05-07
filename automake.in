@@ -4967,6 +4967,7 @@ sub handle_python
   require_variables ($pyfiles[0][0], "Python sources seen", TRUE, 'PYTHON');
   require_conf_file ($pyfiles[0][0], FOREIGN, 'py-compile');
   &define_variable ('py_compile', "$am_config_aux_dir/py-compile", INTERNAL);
+  &define_verbose_var ('pyc', '--silent');
 }
 
 # Handle Java.

@@ -87,7 +87,8 @@ install-exec-hook:
 	  f=`echo $$p | sed '$(transform)'`; \
 	  fv="$$f-$(APIVERSION)"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$fv"; \
-	  echo " $(LN) '$(DESTDIR)$(bindir)/$$f' '$(DESTDIR)$(bindir)/$$fv'"; \
+	  if $(AM_V_P); then echo " $(LN) '$(DESTDIR)$(bindir)/$$f' '$(DESTDIR)$(bindir)/$$fv'"; \
+			else echo "  LN        $(DESTDIR)$(bindir)/$$fv"; fi; \
 	  $(LN) "$(DESTDIR)$(bindir)/$$f" "$(DESTDIR)$(bindir)/$$fv"; \
 	done
 
@@ -161,7 +162,8 @@ install-data-hook:
 	  | sed 's,^lib/,,' \
 	  | ( st=0; \
 	      while read f; do \
-	        echo " chmod +x '$(DESTDIR)$(scriptdir)/$$f'"; \
+	        if $(AM_V_P); then echo " chmod +x '$(DESTDIR)$(scriptdir)/$$f'"; \
+			      else echo "  CHMOD     $(DESTDIR)$(scriptdir)/$$f"; fi; \
 	        chmod +x "$(DESTDIR)$(scriptdir)/$$f" || st=1; \
 	      done; \
 	      exit $$st )

@@ -224,12 +224,14 @@ if %?SUBDIRS%
 	    dir1=$$subdir; dir2="$(top_distdir)"; \
 	    $(am__relativize); \
 	    new_top_distdir=$$reldir; \
-	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
-	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    if $(AM_V_P); then \
+	      echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
+	      echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    fi; \
 	    ($(am__cd) $$subdir && \
 	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
+		top_distdir="$$new_top_distdir" \
+		distdir="$$new_distdir" \
 ## Disable am__remove_distdir so that sub-packages do not clear a
 ## directory we have already cleared and might even have populated
 ## (e.g. shared AUX dir in the sub-package).
@@ -238,7 +240,7 @@ if %?SUBDIRS%
 		am__skip_length_check=: \
 ## No need to fix modes more than once:
 		am__skip_mode_fix=: \
-	        distdir) \
+		distdir) \
 	      || exit 1; \
 	  fi; \
 	done
@@ -315,36 +317,48 @@ if %?TOPDIR_P%
 GZIP_ENV = --best
 .PHONY: dist-gzip
 dist-gzip: distdir
+	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz"; \
+		       else echo "  DIST      $(distdir).tar.gz"; fi; \
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?BZIP2?DIST_ARCHIVES += $(distdir).tar.bz2
 .PHONY: dist-bzip2
 dist-bzip2: distdir
+	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2"; \
+		       else echo "  DIST      $(distdir).tar.bz2"; fi; \
 	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?LZIP?DIST_ARCHIVES += $(distdir).tar.lz
 .PHONY: dist-lzip
 dist-lzip: distdir
+	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz"; \
+		       else echo "  DIST      $(distdir).tar.lz"; fi; \
 	tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?XZ?DIST_ARCHIVES += $(distdir).tar.xz
 .PHONY: dist-xz
 dist-xz: distdir
+	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz"; \
+		       else echo "  DIST      $(distdir).tar.xz"; fi; \
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?COMPRESS?DIST_ARCHIVES += $(distdir).tar.Z
 .PHONY: dist-tarZ
 dist-tarZ: distdir
+	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z"; \
+		      else echo "  DIST      $(distdir).tar.Z"; fi; \
 	tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?SHAR?DIST_ARCHIVES += $(distdir).shar.gz
 .PHONY: dist-shar
 dist-shar: distdir
+	@if $(AM_V_P); then echo "shar $(distdir) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).shar.gz"; \
+		      else echo "  DIST      $(distdir).shar.gz"; fi; \
 	shar $(distdir) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).shar.gz
 	$(AM_V_at)$(am__post_remove_distdir)
 
@@ -352,6 +366,8 @@ dist-shar: distdir
 .PHONY: dist-zip
 dist-zip: distdir
 	-rm -f $(distdir).zip
+	@if $(AM_V_P); then echo "zip -rq $(distdir).zip '$(distdir)'"; \
+		       else echo "  DIST      $(distdir).zip"; fi; \
 	zip -rq $(distdir).zip $(distdir)
 	$(AM_V_at)$(am__post_remove_distdir)
 

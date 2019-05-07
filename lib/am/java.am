@@ -26,13 +26,14 @@ JAVAROOT = $(top_builddir)
 endif %?FIRST%
 
 class%NDIR%.stamp: $(am__java_sources)
-	@list1='$?'; list2=; if test -n "$$list1"; then \
+	@list1='$?'; if test -n "$$list1"; then \
 	  for p in $$list1; do \
+	    c=`echo "$$p" | sed 's|\.java$|.class|'`; \
 	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
-	    list2="$$list2 $$d$$p"; \
+	    if $(AM_V_P); then echo '$(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) '"$$d$$p"; \
+			  else echo "  JAVAC   $$c"; fi; \
+	    $(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) $$d$$p || exit $$?; \
 	  done; \
-	  echo '$(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) '"$$list2"; \
-	  $(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) $$list2; \
 	else :; fi
 	echo timestamp > $@
 
@@ -51,11 +52,16 @@ install-%DIR%JAVA: class%NDIR%.stamp
 ## we just install all the .class files that got built into this
 ## directory.  This is not optimal, but will have to do for now.
 	@test -n "$(%DIR%_JAVA)" && test -n "$(%NDIR%dir)" || exit 0; \
-	echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-	$(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)"; \
+	if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+		      else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
+	$(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	set x *.class; shift; test "$$1" != "*.class" || exit 0; \
-	echo " $(INSTALL_DATA)" "$$@" "'$(DESTDIR)$(%NDIR%dir)/$$p'"; \
-	$(INSTALL_DATA) "$$@" "$(DESTDIR)$(%NDIR%dir)"
+	for c; do \
+	  relfile=`echo "$$c" | sed 's|^.*/||'`; \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA)" "$$@" "'$(DESTDIR)$(%NDIR%dir)/$$p'"; \
+			else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)/$$relfile"; fi; \
+	  $(INSTALL_DATA) "$$c" "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
+	done
 endif %?INSTALL%
 
 

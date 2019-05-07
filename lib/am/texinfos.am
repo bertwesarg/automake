@@ -135,23 +135,24 @@ install-dvi-am: $(DVIS)
 	@$(NORMAL_INSTALL)
 	@list='$(DVIS)'; test -n "$(dvidir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(dvidir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(dvidir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(dvidir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(dvidir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dvidir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dvidir)" || exit $$?; \
+	  $(am__strip_dir) \
+	  if test -f "$$p"; then : ; else p="$(srcdir)/$$p"; fi; \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(dvidir)'"; \
+			else echo "  INSTALL   $(DESTDIR)$(dvidir)/$$f"; fi; \
+	  $(INSTALL_DATA) $$p "$(DESTDIR)$(dvidir)" || exit $$?; \
 	done
 
 install-html-am: $(HTMLS)
 	@$(NORMAL_INSTALL)
-	@list='$(HTMLS)'; list2=; test -n "$(htmldir)" || list=; \
+	@list='$(HTMLS)'; test -n "$(htmldir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(htmldir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(htmldir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
@@ -164,26 +165,26 @@ install-html-am: $(HTMLS)
 ## bug#10026 <http://debbugs.gnu.org/cgi/bugreport.cgi?bug=10026#23>
 	  d2=$$d$$p; \
 	  if test -d "$$d2"; then \
-	    echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)/$$f'"; \
+	    if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)/$$f'"; \
+			  else echo "  MKDIR     $(DESTDIR)$(htmldir)/$$f"; fi; \
 	    $(MKDIR_P) "$(DESTDIR)$(htmldir)/$$f" || exit 1; \
-	    echo " $(INSTALL_DATA) '$$d2'/* '$(DESTDIR)$(htmldir)/$$f'"; \
+	    if $(AM_V_P); then echo " $(INSTALL_DATA) '$$d2'/* '$(DESTDIR)$(htmldir)/$$f'"; \
+			  else echo "  INSTALL   $(DESTDIR)$(htmldir)/$$f/"; fi; \
 	    $(INSTALL_DATA) "$$d2"/* "$(DESTDIR)$(htmldir)/$$f" || exit $$?; \
 	  else \
-	    list2="$$list2 $$d2"; \
+	    if $(AM_V_P); then echo " $(INSTALL_DATA) '$$d2'/* '$(DESTDIR)$(htmldir)'"; \
+			  else echo "  INSTALL   $(DESTDIR)$(htmldir)/$$f"; fi; \
+	    $(INSTALL_DATA) "$$d2" "$(DESTDIR)$(htmldir)" || exit $$?; \
 	  fi; \
-	done; \
-	test -z "$$list2" || { echo "$$list2" | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(htmldir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmldir)" || exit $$?; \
-	done; }
+	done
 
 install-info-am: $(INFO_DEPS)
 	@$(NORMAL_INSTALL)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	list='$(INFO_DEPS)'; test -n "$(infodir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(infodir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(infodir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(infodir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(infodir)" || exit 1; \
 	fi; \
 	for file in $$list; do \
@@ -208,10 +209,11 @@ install-info-am: $(INFO_DEPS)
 	      echo "$$ifile"; \
 	    else : ; fi; \
 	  done; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(infodir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(infodir)" || exit $$?; done
+	done | while read p; do \
+	  $(am__strip_dir) \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(infodir)'"; \
+			else echo "  INSTALL   $(DESTDIR)$(infodir)/$$f"; fi; \
+	  $(INSTALL_DATA) $$p "$(DESTDIR)$(infodir)" || exit $$?; done
 	@$(POST_INSTALL)
 	@if $(am__can_run_installinfo); then \
 	  list='$(INFO_DEPS)'; test -n "$(infodir)" || list=; \
@@ -223,7 +225,8 @@ install-info-am: $(INFO_DEPS)
 ## instance if you don't have a dir file, install-info will fail.  I
 ## think instead it should create a new dir file for you.  This bug
 ## causes the "make distcheck" target to fail reliably.
-	    echo " install-info --info-dir='$(DESTDIR)$(infodir)' '$(DESTDIR)$(infodir)/$$relfile'";\
+	    if $(AM_V_P); then echo " install-info --info-dir='$(DESTDIR)$(infodir)' '$(DESTDIR)$(infodir)/$$relfile'"; \
+			  else echo "  INFO      $(DESTDIR)$(infodir)/$$relfile"; fi; \
 ## Use "|| :" here because Sun make passes -e to sh; if install-info
 ## fails then we'd fail if we used ";".
 	    install-info --info-dir="$(DESTDIR)$(infodir)" "$(DESTDIR)$(infodir)/$$relfile" || :;\
@@ -234,31 +237,33 @@ install-pdf-am: $(PDFS)
 	@$(NORMAL_INSTALL)
 	@list='$(PDFS)'; test -n "$(pdfdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(pdfdir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(pdfdir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(pdfdir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(pdfdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pdfdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pdfdir)" || exit $$?; done
+	  $(am__strip_dir) \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$d$$p '$(DESTDIR)$(pdfdir)'"; \
+			else echo "  INSTALL   $(DESTDIR)$(pdfdir)/$$f"; fi; \
+	  $(INSTALL_DATA) $$d$$p "$(DESTDIR)$(pdfdir)" || exit $$?; \
+	done
 
 install-ps-am: $(PSS)
 	@$(NORMAL_INSTALL)
 	@list='$(PSS)'; test -n "$(psdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(psdir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(psdir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(psdir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(psdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(psdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(psdir)" || exit $$?; done
+	  $(am__strip_dir) \
+	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$d$$p '$(DESTDIR)$(psdir)'"; \
+			else echo "  INSTALL   $(DESTDIR)$(psdir)/$$f"; fi; \
+	  $(INSTALL_DATA) $$d$$p "$(DESTDIR)$(psdir)" || exit $$?; \
+	done
 
 else ! %?LOCAL-TEXIS%
 install-dvi-am:

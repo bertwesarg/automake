@@ -40,6 +40,7 @@ usage_error ()
   exit 1
 }
 
+silent=False
 basedir=
 destdir=
 while test $# -ne 0; do
@@ -62,7 +63,7 @@ while test $# -ne 0; do
       ;;
     -h|--help)
       cat <<\EOF
-Usage: py-compile [--help] [--version] [--basedir DIR] [--destdir DIR] FILES..."
+Usage: py-compile [--help] [--version] [--basedir DIR] [--destdir DIR] [--silent] FILES..."
 
 Byte compile some python scripts FILES.  Use --destdir to specify any
 leading directory path to the FILES that you don't want to include in the
@@ -79,6 +80,9 @@ EOF
     -v|--version)
       echo "$me $scriptversion"
       exit $?
+      ;;
+    --silent)
+      silent=True
       ;;
     --)
       shift
@@ -119,21 +123,27 @@ $PYTHON -c "
 import sys, os, py_compile, imp
 
 files = '''$files'''
+silent = $silent
 
-sys.stdout.write('Byte-compiling python modules...')
+if not silent:
+    sys.stdout.write('Byte-compiling python modules...')
 for file in files.split():
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(' ' + file)
-    sys.stdout.flush()
+    if not silent:
+        sys.stdout.write(' ' + file)
+        sys.stdout.flush()
+    else:
+        sys.stdout.write('  PYTHON    {}\n'.format(filepath + 'c'))
     if hasattr(imp, 'get_tag'):
         py_compile.compile(filepath, imp.cache_from_source(filepath), path)
     else:
         py_compile.compile(filepath, filepath + 'c', path)
-sys.stdout.write('\n')" || exit $?
+if not silent:
+    sys.stdout.write('\n')" || exit $?
 
 # this will fail for python < 1.5, but that doesn't matter ...
 $PYTHON -O -c "
@@ -144,20 +154,27 @@ if hasattr(sys, 'pypy_translation_info'):
     sys.exit(0)
 
 files = '''$files'''
-sys.stdout.write('Byte-compiling python modules (optimized versions)...')
+silent = $silent
+
+if not silent:
+    sys.stdout.write('Byte-compiling python modules (optimized versions)...')
 for file in files.split():
     $pathtrans
     $filetrans
     if not os.path.exists(filepath) or not (len(filepath) >= 3
                                             and filepath[-3:] == '.py'):
 	    continue
-    sys.stdout.write(' ' + file)
-    sys.stdout.flush()
+    if not silent:
+        sys.stdout.write(' ' + file)
+        sys.stdout.flush()
+    else:
+        sys.stdout.write('  PYTHON    {}\n'.format(filepath + 'o'))
     if hasattr(imp, 'get_tag'):
         py_compile.compile(filepath, imp.cache_from_source(filepath, False), path)
     else:
         py_compile.compile(filepath, filepath + 'o', path)
-sys.stdout.write('\n')" 2>/dev/null || :
+if not silent:
+    sys.stdout.write('\n')" 2>/dev/null || :
 
 # Local Variables:
 # mode: shell-script

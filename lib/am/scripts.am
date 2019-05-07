@@ -33,7 +33,8 @@ install-%DIR%SCRIPTS: $(%DIR%_SCRIPTS)
 ## a syntax error in sh.
 	@list='$(%DIR%_SCRIPTS)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 ?!BASE?	$(am__nobase_strip_setup); \
@@ -59,14 +60,17 @@ install-%DIR%SCRIPTS: $(%DIR%_SCRIPTS)
 	  END { for (d in files) print "f", d, files[d] }' | \
 	while read type dir files; do \
 ?!BASE?	  case $$type in \
-?!BASE?	  d) echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+?!BASE?	  d) if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+?!BASE?			   else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
 ?!BASE?	     $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?;; \
 ?!BASE?	  f) \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
-	     } \
+	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	    test -z "$$files" || { for p in $$files; do \
+	      $(am__strip_dir) \
+	      if $(AM_V_P); then echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
+			    else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)$$dir/$$f"; fi; \
+	      $(INSTALL_SCRIPT) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
+	    done; } \
 ?!BASE?	  ;; esac \
 	; done
 endif %?INSTALL%

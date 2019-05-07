@@ -41,21 +41,26 @@ if %?BASE%
 	  else :; fi; \
 	done; \
 	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+			else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
+	  for p in $$list2; do \
+	    $(am__strip_dir) \
 ## Note that we explicitly set the libtool mode.  This avoids any lossage
 ## if the program doesn't have a name that libtool expects.
 ## Use INSTALL and not INSTALL_DATA because libtool knows the right
 ## permissions to use.
-?LIBTOOL?	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(%NDIR%dir)'"; \
-?LIBTOOL?	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(%NDIR%dir)"; \
-?!LIBTOOL?	  echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(%NDIR%dir)'"; \
-?!LIBTOOL?	  $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(%NDIR%dir)"; \
-	}
+?LIBTOOL?	    if $(AM_V_P); then echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)'"; \
+?!LIBTOOL?	    if $(AM_V_P); then echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)'"; \
+			  else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)/$$f"; fi; \
+?LIBTOOL?	    $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
+?!LIBTOOL?	    $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
+	  done; }
 else !%?BASE%
 	@list='$(%DIR%_LTLIBRARIES)'; test -n "$(%NDIR%dir)"  || list=; \
 	if test -n "$$list"; then \
-	    echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+	    if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
+			  else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
 	    $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do if test -f "$$p"; then echo "$$p $$p"; else :; fi; done | \
@@ -67,17 +72,22 @@ else !%?BASE%
 	while read dir files; do \
 	  test -z "$$files" || { \
 	    test "x$$dir" = x. || { \
-	      echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+	      if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+			    else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
 	      $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir"; }; \
+	    for p in $$files; do \
+	      $(am__strip_dir) \
 ## Note that we explicitly set the libtool mode.  This avoids any lossage
 ## if the program doesn't have a name that libtool expects.
 ## Use INSTALL and not INSTALL_DATA because libtool knows the right
 ## permissions to use.
-?LIBTOOL?	    echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$files '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-?LIBTOOL?	    $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$files "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
-?!LIBTOOL?	    echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$files '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-?!LIBTOOL?	    $(INSTALL) $(INSTALL_STRIP_FLAG) $$files "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
-	  }; \
+	      if $(AM_V_P); then \
+?LIBTOOL?		echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+?!LIBTOOL?		echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
+	      else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)/$$dir/$$f"; fi; \
+?LIBTOOL?	      $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
+?!LIBTOOL?	      $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
+	    done; }; \
 	done
 endif !%?BASE%
 endif %?INSTALL%
