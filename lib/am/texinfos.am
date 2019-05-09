@@ -133,26 +133,28 @@ include inst-vars.am
 
 install-dvi-am: $(DVIS)
 	@$(NORMAL_INSTALL)
-	@list='$(DVIS)'; test -n "$(dvidir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(DVIS)'; test -n "$(dvidir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(dvidir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(dvidir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(dvidir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(dvidir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  $(am__strip_dir) \
 	  if test -f "$$p"; then : ; else p="$(srcdir)/$$p"; fi; \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(dvidir)'"; \
-			else echo "  INSTALL   $(DESTDIR)$(dvidir)/$$f"; fi; \
+			else echo "  INSTALL   ${blu}$(DESTDIR)$(dvidir)/$$f$$std"; fi; \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(dvidir)" || exit $$?; \
 	done
 
 install-html-am: $(HTMLS)
 	@$(NORMAL_INSTALL)
-	@list='$(HTMLS)'; test -n "$(htmldir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(HTMLS)'; test -n "$(htmldir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(htmldir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(htmldir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(htmldir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
@@ -166,25 +168,26 @@ install-html-am: $(HTMLS)
 	  d2=$$d$$p; \
 	  if test -d "$$d2"; then \
 	    if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(htmldir)/$$f'"; \
-			  else echo "  MKDIR     $(DESTDIR)$(htmldir)/$$f"; fi; \
+			  else echo "  MKDIR     $${mgn}$(DESTDIR)$(htmldir)/$$f$$std"; fi; \
 	    $(MKDIR_P) "$(DESTDIR)$(htmldir)/$$f" || exit 1; \
 	    if $(AM_V_P); then echo " $(INSTALL_DATA) '$$d2'/* '$(DESTDIR)$(htmldir)/$$f'"; \
-			  else echo "  INSTALL   $(DESTDIR)$(htmldir)/$$f/"; fi; \
+			  else echo "  INSTALL   $${blu}$(DESTDIR)$(htmldir)/$$f/$$std"; fi; \
 	    $(INSTALL_DATA) "$$d2"/* "$(DESTDIR)$(htmldir)/$$f" || exit $$?; \
 	  else \
 	    if $(AM_V_P); then echo " $(INSTALL_DATA) '$$d2'/* '$(DESTDIR)$(htmldir)'"; \
-			  else echo "  INSTALL   $(DESTDIR)$(htmldir)/$$f"; fi; \
+			  else echo "  INSTALL   $${blu}$(DESTDIR)$(htmldir)/$$f$$std"; fi; \
 	    $(INSTALL_DATA) "$$d2" "$(DESTDIR)$(htmldir)" || exit $$?; \
 	  fi; \
 	done
 
 install-info-am: $(INFO_DEPS)
 	@$(NORMAL_INSTALL)
-	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
+	@$(am__tty_colors); \
+	srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	list='$(INFO_DEPS)'; test -n "$(infodir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(infodir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(infodir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(infodir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(infodir)" || exit 1; \
 	fi; \
 	for file in $$list; do \
@@ -212,10 +215,11 @@ install-info-am: $(INFO_DEPS)
 	done | while read p; do \
 	  $(am__strip_dir) \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$p '$(DESTDIR)$(infodir)'"; \
-			else echo "  INSTALL   $(DESTDIR)$(infodir)/$$f"; fi; \
+			else echo "  INSTALL   $${blu}$(DESTDIR)$(infodir)/$$f$$std"; fi; \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(infodir)" || exit $$?; done
 	@$(POST_INSTALL)
-	@if $(am__can_run_installinfo); then \
+	@$(am__tty_colors); \
+	if $(am__can_run_installinfo); then \
 	  list='$(INFO_DEPS)'; test -n "$(infodir)" || list=; \
 	  for file in $$list; do \
 ## Strip directory
@@ -226,7 +230,7 @@ install-info-am: $(INFO_DEPS)
 ## think instead it should create a new dir file for you.  This bug
 ## causes the "make distcheck" target to fail reliably.
 	    if $(AM_V_P); then echo " install-info --info-dir='$(DESTDIR)$(infodir)' '$(DESTDIR)$(infodir)/$$relfile'"; \
-			  else echo "  INFO      $(DESTDIR)$(infodir)/$$relfile"; fi; \
+			  else echo "  INFO      $${blu}$(DESTDIR)$(infodir)/$$relfile$$std"; fi; \
 ## Use "|| :" here because Sun make passes -e to sh; if install-info
 ## fails then we'd fail if we used ";".
 	    install-info --info-dir="$(DESTDIR)$(infodir)" "$(DESTDIR)$(infodir)/$$relfile" || :;\
@@ -235,33 +239,35 @@ install-info-am: $(INFO_DEPS)
 
 install-pdf-am: $(PDFS)
 	@$(NORMAL_INSTALL)
-	@list='$(PDFS)'; test -n "$(pdfdir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(PDFS)'; test -n "$(pdfdir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(pdfdir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(pdfdir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(pdfdir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(pdfdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  $(am__strip_dir) \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$d$$p '$(DESTDIR)$(pdfdir)'"; \
-			else echo "  INSTALL   $(DESTDIR)$(pdfdir)/$$f"; fi; \
+			else echo "  INSTALL   $${blu}$(DESTDIR)$(pdfdir)/$$f$$std"; fi; \
 	  $(INSTALL_DATA) $$d$$p "$(DESTDIR)$(pdfdir)" || exit $$?; \
 	done
 
 install-ps-am: $(PSS)
 	@$(NORMAL_INSTALL)
-	@list='$(PSS)'; test -n "$(psdir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(PSS)'; test -n "$(psdir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(psdir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(psdir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(psdir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(psdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  $(am__strip_dir) \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) $$d$$p '$(DESTDIR)$(psdir)'"; \
-			else echo "  INSTALL   $(DESTDIR)$(psdir)/$$f"; fi; \
+			else echo "  INSTALL   $${blu}$(DESTDIR)$(psdir)/$$f$$std"; fi; \
 	  $(INSTALL_DATA) $$d$$p "$(DESTDIR)$(psdir)" || exit $$?; \
 	done
 

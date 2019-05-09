@@ -1182,13 +1182,13 @@ sub silent_flag ()
     return verbose_flag ('at');
 }
 
-# define_verbose_tagvar (NAME)
-# ----------------------------
+# define_verbose_tagvar (NAME, COLOR)
+# -----------------------------------
 # Engage the needed silent rules machinery for tag NAME.
 sub define_verbose_tagvar ($)
 {
-    my ($name) = @_;
-    define_verbose_var ($name, '@echo "  '. $name . ' ' x (8 - length ($name)) . '" $@;');
+    my ($name,$col) = @_;
+    define_verbose_var ($name, '@$(am__tty_colors); echo "  '. $name . ' ' x (8 - length ($name)) . '$${' . $col . '}" $@ "$${std}";');
 }
 
 # define_verbose_texinfo
@@ -1199,7 +1199,7 @@ sub define_verbose_texinfo ()
   my @tagvars = ('DVIPS', 'MAKEINFO', 'INFOHTML', 'TEXI2DVI', 'TEXI2PDF');
   foreach my $tag (@tagvars)
     {
-      define_verbose_tagvar($tag);
+      define_verbose_tagvar($tag, 'mgn');
     }
   define_verbose_var('texinfo', '-q');
   define_verbose_var('texidevnull', '> /dev/null');
@@ -1224,7 +1224,7 @@ sub handle_silent ()
     # of a better convention.
     define_verbose_var ('P', 'false', ':');
     # *Always* provide the user with '$(AM_V_GEN)', unconditionally.
-    define_verbose_tagvar ('GEN');
+    define_verbose_tagvar ('GEN', 'mgn');
     define_verbose_var ('at', '@');
 }
 
@@ -2589,7 +2589,7 @@ sub handle_libraries
 
   &define_variable ('AR', 'ar', INTERNAL);
   &define_variable ('ARFLAGS', 'cr', INTERNAL);
-  &define_verbose_tagvar ('AR');
+  &define_verbose_tagvar ('AR', 'grn');
 
   foreach my $pair (@liblist)
     {
@@ -6226,7 +6226,10 @@ sub define_compiler_variable ($)
 			  . "\$(LIBTOOLFLAGS) --mode=compile $value",
 			  INTERNAL);
       }
-    define_verbose_tagvar ($lang->ccer || 'GEN');
+    define_verbose_tagvar ($lang->ccer || 'GEN',
+			   ($lang->ccer && $lang->ccer ne 'LEX'
+			    && $lang->ccer ne 'YACC')
+			   ? 'blu' : 'mgn');
 }
 
 
@@ -6252,7 +6255,7 @@ sub define_linker_variable ($)
       }
     &define_variable ($lang->linker, $link . $lang->link, INTERNAL);
     &define_variable ($lang->compiler,  $lang);
-    &define_verbose_tagvar ($lang->lder || 'GEN');
+    &define_verbose_tagvar ($lang->lder || 'GEN', $lang->lder ? 'grn' : 'mgn');
 }
 
 sub define_per_target_linker_variable ($$)

@@ -83,12 +83,13 @@ extend_PATH = \
 # seemed like the most reasonable approach.
 install-exec-hook:
 	@$(POST_INSTALL)
-	@for p in $(bin_SCRIPTS); do \
+	@$(am__tty_colors); \
+	for p in $(bin_SCRIPTS); do \
 	  f=`echo $$p | sed '$(transform)'`; \
 	  fv="$$f-$(APIVERSION)"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$fv"; \
 	  if $(AM_V_P); then echo " $(LN) '$(DESTDIR)$(bindir)/$$f' '$(DESTDIR)$(bindir)/$$fv'"; \
-			else echo "  LN        $(DESTDIR)$(bindir)/$$fv"; fi; \
+			else echo "  LN        $${grn}$(DESTDIR)$(bindir)/$$fv$$std"; fi; \
 	  $(LN) "$(DESTDIR)$(bindir)/$$f" "$(DESTDIR)$(bindir)/$$fv"; \
 	done
 
@@ -158,12 +159,13 @@ dist_script_DATA = \
 
 install-data-hook:
 	@$(POST_INSTALL)
-	@for f in $(dist_script_DATA); do echo $$f; done \
+	@$(am__tty_colors); \
+	for f in $(dist_script_DATA); do echo $$f; done \
 	  | sed 's,^lib/,,' \
 	  | ( st=0; \
 	      while read f; do \
 	        if $(AM_V_P); then echo " chmod +x '$(DESTDIR)$(scriptdir)/$$f'"; \
-			      else echo "  CHMOD     $(DESTDIR)$(scriptdir)/$$f"; fi; \
+			      else echo "  CHMOD     $${grn}$(DESTDIR)$(scriptdir)/$$f$$std"; fi; \
 	        chmod +x "$(DESTDIR)$(scriptdir)/$$f" || st=1; \
 	      done; \
 	      exit $$st )

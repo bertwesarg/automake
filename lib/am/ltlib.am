@@ -34,7 +34,8 @@ install-%DIR%LTLIBRARIES: $(%DIR%_LTLIBRARIES)
 if %?BASE%
 ## Funny invocation because Makefile variable can be empty, leading to
 ## a syntax error in sh.
-	@list='$(%DIR%_LTLIBRARIES)'; test -n "$(%NDIR%dir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_LTLIBRARIES)'; test -n "$(%NDIR%dir)" || list=; \
 	list2=; for p in $$list; do \
 	  if test -f $$p; then \
 	    list2="$$list2 $$p"; \
@@ -42,7 +43,7 @@ if %?BASE%
 	done; \
 	test -z "$$list2" || { \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-			else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
+			else echo "  MKDIR     $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	  for p in $$list2; do \
 	    $(am__strip_dir) \
@@ -52,15 +53,16 @@ if %?BASE%
 ## permissions to use.
 ?LIBTOOL?	    if $(AM_V_P); then echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)'"; \
 ?!LIBTOOL?	    if $(AM_V_P); then echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)'"; \
-			  else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)/$$f"; fi; \
+			  else echo "  INSTALL   $${grn}$(DESTDIR)$(%NDIR%dir)/$$f$$std"; fi; \
 ?LIBTOOL?	    $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
 ?!LIBTOOL?	    $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
 	  done; }
 else !%?BASE%
-	@list='$(%DIR%_LTLIBRARIES)'; test -n "$(%NDIR%dir)"  || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_LTLIBRARIES)'; test -n "$(%NDIR%dir)"  || list=; \
 	if test -n "$$list"; then \
 	    if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-			  else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)"; fi; \
+			  else echo "  MKDIR     $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	    $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do if test -f "$$p"; then echo "$$p $$p"; else :; fi; done | \
@@ -73,7 +75,7 @@ else !%?BASE%
 	  test -z "$$files" || { \
 	    test "x$$dir" = x. || { \
 	      if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-			    else echo "  MKDIR     $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
+			    else echo "  MKDIR     $${mgn}$(DESTDIR)$(%NDIR%dir)/$$dir$$std"; fi; \
 	      $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir"; }; \
 	    for p in $$files; do \
 	      $(am__strip_dir) \
@@ -84,7 +86,7 @@ else !%?BASE%
 	      if $(AM_V_P); then \
 ?LIBTOOL?		echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
 ?!LIBTOOL?		echo " $(INSTALL) $(INSTALL_STRIP_FLAG) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-	      else echo "  INSTALL   $(DESTDIR)$(%NDIR%dir)/$$dir/$$f"; fi; \
+	      else echo "  INSTALL   $${grn}$(DESTDIR)$(%NDIR%dir)/$$dir/$$f$$std"; fi; \
 ?LIBTOOL?	      $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
 ?!LIBTOOL?	      $(INSTALL) $(INSTALL_STRIP_FLAG) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
 	    done; }; \
