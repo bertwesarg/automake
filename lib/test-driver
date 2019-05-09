@@ -88,7 +88,7 @@ if test $# -eq 0; then
 fi
 
 if test $color_tests = yes; then
-  # Keep this in sync with 'lib/am/check.am:$(am__tty_colors)'.
+  # Keep this in sync with 'lib/am/header-vars.am:$(am__tty_colors)'.
   red='[0;31m' # Red.
   grn='[0;32m' # Green.
   lgn='[1;32m' # Light green.

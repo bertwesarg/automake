@@ -32,14 +32,15 @@ install-man%SECTION%: %DEPS%
 	@$(NORMAL_INSTALL)
 if %?NOTRANS_MANS%
 ## Handle MANS with notrans_ prefix
-	@list1='%NOTRANS_SECT_LIST%'; \
+	@$(am__tty_colors); \
+	list1='%NOTRANS_SECT_LIST%'; \
 ?!HAVE_NOTRANS?	list2=''; \
 ?HAVE_NOTRANS?	list2='%NOTRANS_LIST%'; \
 	test -n "$(man%SECTION%dir)" \
 	  && test -n "`echo $$list1$$list2`" \
 	  || exit 0; \
 	if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
-	              else echo "  MKDIR    $(DESTDIR)$(man%SECTION%dir)"; fi; \
+	              else echo "  MKDIR    $${mgn}$(DESTDIR)$(man%SECTION%dir)$$std"; fi; \
 	$(MKDIR_P) "$(DESTDIR)$(man%SECTION%dir)" || exit 1; \
 	{ for i in $$list1; do echo "$$i"; done;  \
 ## Extract all items from notrans_man_MANS that should go in this section.
@@ -61,20 +62,21 @@ if %?NOTRANS_MANS%
 ## We now have a list "sourcefile basename installed-name".
 	while read file base inst; do \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
-	                else echo "  INSTALL  $(DESTDIR)$(man%SECTION%dir)/$$inst"; fi; \
+	                else echo "  INSTALL  $${blu}$(DESTDIR)$(man%SECTION%dir)/$$inst$$std"; fi; \
 	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
 	done
 endif %?NOTRANS_MANS%
 if %?TRANS_MANS%
 ## Handle MANS without notrans_ prefix
-	@list1='%TRANS_SECT_LIST%'; \
+	@$(am__tty_colors); \
+	list1='%TRANS_SECT_LIST%'; \
 ?!HAVE_TRANS?	list2=''; \
 ?HAVE_TRANS?	list2='%TRANS_LIST%'; \
 	test -n "$(man%SECTION%dir)" \
 	  && test -n "`echo $$list1$$list2`" \
 	  || exit 0; \
 	if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(man%SECTION%dir)'"; \
-	              else echo "  MKDIR    $(DESTDIR)$(man%SECTION%dir)"; fi; \
+	              else echo "  MKDIR    $${mgn}$(DESTDIR)$(man%SECTION%dir)$$std"; fi; \
 	$(MKDIR_P) "$(DESTDIR)$(man%SECTION%dir)" || exit 1; \
 	{ for i in $$list1; do echo "$$i"; done;  \
 ## Extract all items from notrans_man_MANS that should go in this section.
@@ -97,7 +99,7 @@ if %?TRANS_MANS%
 ## We now have a list "sourcefile basename installed-name".
 	while read file base inst; do \
 	  if $(AM_V_P); then echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man%SECTION%dir)/$$inst'"; \
-	                else echo "  INSTALL  $(DESTDIR)$(man%SECTION%dir)/$$inst"; fi; \
+	                else echo "  INSTALL  $${blu}$(DESTDIR)$(man%SECTION%dir)/$$inst$$std"; fi; \
 	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man%SECTION%dir)/$$inst" || exit $$?; \
 	done
 endif %?TRANS_MANS%

@@ -31,10 +31,11 @@ install-%DIR%SCRIPTS: $(%DIR%_SCRIPTS)
 	@$(NORMAL_INSTALL)
 ## Funny invocation because Makefile variable can be empty, leading to
 ## a syntax error in sh.
-	@list='$(%DIR%_SCRIPTS)'; test -n "$(%NDIR%dir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_SCRIPTS)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
+	                else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 ?!BASE?	$(am__nobase_strip_setup); \
@@ -61,14 +62,14 @@ install-%DIR%SCRIPTS: $(%DIR%_SCRIPTS)
 	while read type dir files; do \
 ?!BASE?	  case $$type in \
 ?!BASE?	  d) if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-?!BASE?	                   else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
+?!BASE?	                   else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)/$$dir$$std"; fi; \
 ?!BASE?	     $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?;; \
 ?!BASE?	  f) \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
 	    test -z "$$files" || { for p in $$files; do \
 	      $(am__strip_dir) \
 	      if $(AM_V_P); then echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
-	                    else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)$$dir/$$f"; fi; \
+	                    else echo "  INSTALL  $${grn}$(DESTDIR)$(%NDIR%dir)$$dir/$$f$$std"; fi; \
 	      $(INSTALL_SCRIPT) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
 	    done; } \
 ?!BASE?	  ;; esac \

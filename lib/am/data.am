@@ -31,10 +31,11 @@ install-%DIR%%PRIMARY%: $(%DIR%_%PRIMARY%)
 if %?BASE%
 ## Funny invocation because Makefile variable can be empty, leading to
 ## a syntax error in sh.
-	@list='$(%DIR%_%PRIMARY%)'; test -n "$(%NDIR%dir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_%PRIMARY%)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
+	                else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
@@ -45,14 +46,15 @@ if %?BASE%
 ## $(destdir)/bar, not $(destdir)/foo/bar.  The user can make a
 ## new dir variable or use a nobase_ target for the latter case.
 	  if $(AM_V_P); then echo " $(INSTALL_%ONE_PRIMARY%) $$d$$p '$(DESTDIR)$(%NDIR%dir)'"; \
-	                else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)/$$f"; fi; \
+	                else echo "  INSTALL  $${blu}$(DESTDIR)$(%NDIR%dir)/$$f$$std"; fi; \
 	  $(INSTALL_%ONE_PRIMARY%) $$d$$p "$(DESTDIR)$(%NDIR%dir)" || exit $$?; \
 	done
 else !%?BASE%
-	@list='$(%DIR%_%PRIMARY%)'; test -n "$(%NDIR%dir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_%PRIMARY%)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
+	                else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	$(am__nobase_list) | while read dir files; do \
@@ -62,12 +64,12 @@ else !%?BASE%
 	  test -z "$$xfiles" || { \
 	    test "x$$dir" = x. || { \
 	      if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-	                    else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
+	                    else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)/$$dir$$std"; fi; \
 	      $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir"; }; \
 	    for p in $$xfiles; do \
 	      $(am__strip_dir) \
 	      if $(AM_V_P); then echo " $(INSTALL_%ONE_PRIMARY%) $$p '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-	                    else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)/$$dir/$$f"; fi; \
+	                    else echo "  INSTALL  $${blu}$(DESTDIR)$(%NDIR%dir)/$$dir/$$f$$std"; fi; \
 	      $(INSTALL_%ONE_PRIMARY%) $$p "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?; \
 	    done; }; \
 	done

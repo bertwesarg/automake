@@ -26,10 +26,11 @@ install-%DIR%PROGRAMS: $(%DIR%_PROGRAMS)
 	@$(NORMAL_INSTALL)
 ## Funny invocation because Makefile variable can be empty, leading to
 ## a syntax error in sh.
-	@list='$(%DIR%_PROGRAMS)'; test -n "$(%NDIR%dir)" || list=; \
+	@$(am__tty_colors); \
+	list='$(%DIR%_PROGRAMS)'; test -n "$(%NDIR%dir)" || list=; \
 	if test -n "$$list"; then \
 	  if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)'"; \
-	                else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)"; fi; \
+	                else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)$$std"; fi; \
 	  $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)" || exit 1; \
 	fi; \
 	for p in $$list; do echo "$$p $$p"; done | \
@@ -59,7 +60,7 @@ install-%DIR%PROGRAMS: $(%DIR%_PROGRAMS)
 	while read type dir files; do \
 ?!BASE?	  case $$type in \
 ?!BASE?	  d) if $(AM_V_P); then echo " $(MKDIR_P) '$(DESTDIR)$(%NDIR%dir)/$$dir'"; \
-?!BASE?	                   else echo "  MKDIR    $(DESTDIR)$(%NDIR%dir)/$$dir"; fi; \
+?!BASE?	                   else echo "  MKDIR    $${mgn}$(DESTDIR)$(%NDIR%dir)/$$dir$$std"; fi; \
 ?!BASE?	     $(MKDIR_P) "$(DESTDIR)$(%NDIR%dir)/$$dir" || exit $$?;; \
 ?!BASE?	  f) \
 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
@@ -70,7 +71,7 @@ install-%DIR%PROGRAMS: $(%DIR%_PROGRAMS)
 	      $(am__strip_dir) \
 ?!LIBTOOL?	      if $(AM_V_P); then echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
 ?LIBTOOL?	      if $(AM_V_P); then echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$p '$(DESTDIR)$(%NDIR%dir)$$dir'"; \
-	                    else echo "  INSTALL  $(DESTDIR)$(%NDIR%dir)$$dir/$$f"; fi; \
+	                    else echo "  INSTALL  $${grn}$(DESTDIR)$(%NDIR%dir)$$dir/$$f$$std"; fi; \
 ?!LIBTOOL?	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
 ?LIBTOOL?	      $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$p "$(DESTDIR)$(%NDIR%dir)$$dir" || exit $$?; \
 	    done; } \

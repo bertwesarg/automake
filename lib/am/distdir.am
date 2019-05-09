@@ -336,32 +336,36 @@ if %?TOPDIR_P%
 GZIP_ENV = --best
 .PHONY: dist-gzip
 dist-gzip: distdir
-	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).tar.gz"; \
-	               else echo "  DIST     $(distdir).tar.gz"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).tar.gz"; \
+	              else echo "  DIST     $${grn}$(distdir).tar.gz$$std"; fi; \
 	tardir=$(distdir) && $(am__tar) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).tar.gz
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?BZIP2?DIST_ARCHIVES += $(distdir).tar.bz2
 .PHONY: dist-bzip2
 dist-bzip2: distdir
-	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2"; \
-	               else echo "  DIST     $(distdir).tar.bz2"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2"; \
+	              else echo "  DIST     $${grn}$(distdir).tar.bz2$$std"; fi; \
 	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?LZIP?DIST_ARCHIVES += $(distdir).tar.lz
 .PHONY: dist-lzip
 dist-lzip: distdir
-	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz"; \
-	               else echo "  DIST     $(distdir).tar.lz"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz"; \
+	              else echo "  DIST     $${grn}$(distdir).tar.lz$$std"; fi; \
 	tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz
 	$(AM_V_at)$(am__post_remove_distdir)
 
 ?XZ?DIST_ARCHIVES += $(distdir).tar.xz
 .PHONY: dist-xz
 dist-xz: distdir
-	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz"; \
-	               else echo "  DIST     $(distdir).tar.xz"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz"; \
+	              else echo "  DIST     $${grn}$(distdir).tar.xz$$std"; fi; \
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(AM_V_at)$(am__post_remove_distdir)
 
@@ -377,8 +381,9 @@ dist-tarZ: distdir
 	@echo WARNING: "Support for distribution archives compressed with" \
 		       "legacy program 'compress' is deprecated." >&2
 	@echo WARNING: "It will be removed altogether in Automake 2.0" >&2
-	@if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z"; \
-	               else echo "  DIST     $(distdir).tar.Z"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z"; \
+	              else echo "  DIST     $${grn}$(distdir).tar.Z$$std"; fi; \
 	tardir=$(distdir) && $(am__tar) | compress -c >$(distdir).tar.Z
 	$(AM_V_at)$(am__post_remove_distdir)
 
@@ -388,8 +393,9 @@ dist-shar: distdir
 	@echo WARNING: "Support for shar distribution archives is" \
 	               "deprecated." >&2
 	@echo WARNING: "It will be removed altogether in Automake 2.0" >&2
-	@if $(AM_V_P); then echo "shar $(distdir) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).shar.gz"; \
-	               else echo "  DIST     $(distdir).shar.gz"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "shar $(distdir) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).shar.gz"; \
+	              else echo "  DIST     $${grn}$(distdir).shar.gz$$std"; fi; \
 	shar $(distdir) | eval GZIP= gzip $(GZIP_ENV) -c >$(distdir).shar.gz
 	$(AM_V_at)$(am__post_remove_distdir)
 
@@ -397,8 +403,9 @@ dist-shar: distdir
 .PHONY: dist-zip
 dist-zip: distdir
 	-rm -f $(distdir).zip
-	@if $(AM_V_P); then echo "zip -rq $(distdir).zip '$(distdir)'"; \
-	               else echo "  DIST     $(distdir).zip"; fi; \
+	@$(am__tty_colors); \
+	if $(AM_V_P); then echo "zip -rq $(distdir).zip '$(distdir)'"; \
+	              else echo "  DIST     $${grn}$(distdir).zip$$std"; fi; \
 	zip -rq $(distdir).zip $(distdir)
 	$(AM_V_at)$(am__post_remove_distdir)
 
